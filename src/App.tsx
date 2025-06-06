@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/hooks/useAuth";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ConsoleLayout } from "@/components/layout/ConsoleLayout";
 import Dashboard from "./pages/Dashboard";
@@ -23,6 +23,84 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AppRoutes = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="*" element={<Navigate to="/signin" replace />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <ConsoleLayout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        
+        {/* Admin-only routes */}
+        <Route path="/admin/users" element={
+          <ProtectedRoute requiredRole="admin">
+            <Users />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/salons" element={
+          <ProtectedRoute requiredRole="admin">
+            <Salons />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/analytics" element={
+          <ProtectedRoute requiredRole="admin">
+            <Analytics />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/requests" element={
+          <ProtectedRoute requiredRole="admin">
+            <Requests />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/settings" element={
+          <ProtectedRoute requiredRole="admin">
+            <Settings />
+          </ProtectedRoute>
+        } />
+        
+        {/* Salon owner routes */}
+        <Route path="/owner/salons" element={
+          <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+            <OwnerSalons />
+          </ProtectedRoute>
+        } />
+        <Route path="/owner/appointments" element={
+          <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+            <OwnerAppointments />
+          </ProtectedRoute>
+        } />
+        <Route path="/owner/staff" element={
+          <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+            <OwnerStaff />
+          </ProtectedRoute>
+        } />
+        <Route path="/owner/analytics" element={
+          <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+            <OwnerAnalytics />
+          </ProtectedRoute>
+        } />
+        <Route path="/owner/profile" element={
+          <ProtectedRoute requiredRole="owner">
+            <OwnerProfile />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/signin" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </ConsoleLayout>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -30,73 +108,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/*" element={
-              <ConsoleLayout>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  
-                  {/* Admin-only routes */}
-                  <Route path="/admin/users" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Users />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/admin/salons" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Salons />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/admin/analytics" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Analytics />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/admin/requests" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Requests />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/admin/settings" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Settings />
-                    </ProtectedRoute>
-                  } />
-                  
-                  {/* Salon owner routes */}
-                  <Route path="/owner/salons" element={
-                    <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
-                      <OwnerSalons />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/owner/appointments" element={
-                    <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
-                      <OwnerAppointments />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/owner/staff" element={
-                    <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
-                      <OwnerStaff />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/owner/analytics" element={
-                    <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
-                      <OwnerAnalytics />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/owner/profile" element={
-                    <ProtectedRoute requiredRole="owner">
-                      <OwnerProfile />
-                    </ProtectedRoute>
-                  } />
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ConsoleLayout>
-            } />
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
