@@ -21,48 +21,66 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const { user, hasRole, isAuthenticated } = useAuth();
 
-  console.log('ProtectedRoute Debug:', {
+  console.log('=== ProtectedRoute Debug START ===');
+  console.log('Route Props:', {
+    requiredRole,
+    requireSalonAccess
+  });
+  console.log('Auth State:', {
     isAuthenticated,
     user,
-    requiredRole,
-    requireSalonAccess,
     userRole: user?.role,
     salonIds: user?.salonIds,
     currentSalonId: user?.currentSalonId
   });
 
   if (!isAuthenticated) {
-    console.log('User not authenticated, redirecting to signin');
+    console.log('❌ User not authenticated, redirecting to signin');
     return <Navigate to="/signin" replace />;
   }
 
-  if (requiredRole && !hasRole(requiredRole)) {
-    console.log('User does not have required role:', requiredRole);
-    return fallback || (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-500" />
-              Access Denied
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              You don't have permission to access this page. Required role: {requiredRole}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  // Check required role
+  if (requiredRole) {
+    const roleCheck = hasRole(requiredRole);
+    console.log('Role Check:', {
+      requiredRole,
+      userRole: user?.role,
+      hasRole: roleCheck
+    });
+    
+    if (!roleCheck) {
+      console.log('❌ User does not have required role:', requiredRole);
+      return fallback || (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Card className="max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+                Access Denied
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                You don't have permission to access this page. Required role: {requiredRole}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
   }
 
-  // For salon owners, check if they have salon access
+  // Check salon access for salon owners
   if (requireSalonAccess && user?.role === 'owner') {
-    console.log('Checking salon access for owner:', user.salonIds);
-    // If they don't have any salon IDs, show no access message
+    console.log('Salon Access Check:', {
+      userRole: user.role,
+      salonIds: user.salonIds,
+      hasSalonIds: !!user.salonIds?.length,
+      requireSalonAccess
+    });
+    
     if (!user?.salonIds?.length) {
-      console.log('Owner has no salon access');
+      console.log('❌ Owner has no salon access');
       return fallback || (
         <div className="flex items-center justify-center min-h-[400px]">
           <Card className="max-w-md">
@@ -81,9 +99,10 @@ export const ProtectedRoute = ({
         </div>
       );
     }
-    console.log('Owner has salon access, allowing through');
+    console.log('✅ Owner has salon access, allowing through');
   }
 
-  console.log('All checks passed, rendering children');
+  console.log('✅ All checks passed, rendering children');
+  console.log('=== ProtectedRoute Debug END ===');
   return <>{children}</>;
 };

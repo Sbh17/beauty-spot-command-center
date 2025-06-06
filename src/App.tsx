@@ -24,9 +24,12 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
+  console.log('AppContent render - Auth state:', { isAuthenticated, user });
 
   if (!isAuthenticated) {
+    console.log('Not authenticated, showing sign-in routes');
     return (
       <Routes>
         <Route path="/signin" element={<SignIn />} />
@@ -35,6 +38,7 @@ const AppContent = () => {
     );
   }
 
+  console.log('User authenticated, showing protected routes');
   return (
     <ConsoleLayout>
       <Routes>
