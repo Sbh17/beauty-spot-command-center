@@ -108,10 +108,10 @@ export function ConsoleSidebar() {
       <SidebarHeader className="p-6">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 console-gradient rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">BS</span>
+            <span className="text-white font-bold text-sm">H</span>
           </div>
           <div>
-            <h1 className="font-semibold text-sidebar-foreground">BeautySpot</h1>
+            <h1 className="font-semibold text-sidebar-foreground">HAIB</h1>
             <p className="text-xs text-sidebar-foreground/60">Console</p>
           </div>
         </div>
