@@ -25,7 +25,14 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 
-const adminMenuItems = [
+interface MenuItem {
+  title: string;
+  url: string;
+  icon: React.ComponentType<any>;
+  badge?: string;
+}
+
+const adminMenuItems: MenuItem[] = [
   {
     title: "Dashboard",
     url: "/",
@@ -59,7 +66,7 @@ const adminMenuItems = [
   },
 ];
 
-const ownerMenuItems = [
+const ownerMenuItems: MenuItem[] = [
   {
     title: "Dashboard",
     url: "/",
