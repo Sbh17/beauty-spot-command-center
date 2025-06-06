@@ -26,12 +26,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>({
-    id: '1',
-    name: 'John Admin',
-    email: 'admin@beautyspot.com',
-    role: 'admin'
-  });
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   const login = async (email: string, password: string) => {
     // Mock login logic - replace with actual authentication
@@ -60,6 +55,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         salonIds: ['salon-3'],
         currentSalonId: 'salon-3'
       });
+    } else {
+      throw new Error('Invalid credentials');
     }
   };
 
