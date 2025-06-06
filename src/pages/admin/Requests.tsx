@@ -113,7 +113,7 @@ const Requests = () => {
           <DataTable
             data={requests}
             columns={requestColumns}
-            actions={
+            actions={(item) => (
               <div className="flex gap-2">
                 <Button size="sm" variant="outline">
                   <Eye className="h-3 w-3 mr-1" />
@@ -128,7 +128,7 @@ const Requests = () => {
                   Reject
                 </Button>
               </div>
-            }
+            )}
           />
         </CardContent>
       </Card>

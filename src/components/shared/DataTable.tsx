@@ -20,12 +20,14 @@ interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
   title?: string;
+  actions?: (item: T) => React.ReactNode;
 }
 
 export function DataTable<T extends Record<string, any>>({ 
   data, 
   columns, 
-  title 
+  title,
+  actions
 }: DataTableProps<T>) {
   return (
     <Card>
@@ -41,6 +43,7 @@ export function DataTable<T extends Record<string, any>>({
               {columns.map((column) => (
                 <TableHead key={String(column.key)}>{column.label}</TableHead>
               ))}
+              {actions && <TableHead>Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -54,6 +57,11 @@ export function DataTable<T extends Record<string, any>>({
                     }
                   </TableCell>
                 ))}
+                {actions && (
+                  <TableCell>
+                    {actions(item)}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
