@@ -18,6 +18,7 @@ import OwnerAppointments from "./pages/owner/Appointments";
 import OwnerStaff from "./pages/owner/Staff";
 import OwnerAnalytics from "./pages/owner/Analytics";
 import OwnerProfile from "./pages/owner/Profile";
+import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
