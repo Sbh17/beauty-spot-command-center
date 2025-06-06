@@ -27,8 +27,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   console.log('AuthProvider render, current user:', user);
+
+  // Initialize user from localStorage on mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('haib_user');
+    if (savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        console.log('Restoring user from localStorage:', parsedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        localStorage.removeItem('haib_user');
+      }
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (isInitialized) {
+      if (user) {
+        console.log('Saving user to localStorage:', user);
+        localStorage.setItem('haib_user', JSON.stringify(user));
+      } else {
+        console.log('Removing user from localStorage');
+        localStorage.removeItem('haib_user');
+      }
+    }
+  }, [user, isInitialized]);
 
   // Auto-set currentSalonId if user has salon access but no currentSalonId
   useEffect(() => {
