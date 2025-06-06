@@ -23,7 +23,7 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const AppRoutes = () => {
+const AppContent = () => {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
@@ -108,7 +108,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AppRoutes />
+          <AppContent />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
