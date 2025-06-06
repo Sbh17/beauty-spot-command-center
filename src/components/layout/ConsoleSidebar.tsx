@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
+import { SalonSelector } from "@/components/auth/SalonSelector";
 
 interface MenuItem {
   title: string;
@@ -100,8 +101,8 @@ const ownerMenuItems: MenuItem[] = [
 ];
 
 export function ConsoleSidebar() {
-  const { user } = useAuth();
-  const menuItems = user?.role === 'admin' ? adminMenuItems : ownerMenuItems;
+  const { user, isAdmin, isSalonOwner } = useAuth();
+  const menuItems = isAdmin ? adminMenuItems : ownerMenuItems;
 
   return (
     <Sidebar className="border-r border-border bg-sidebar">
@@ -119,12 +120,19 @@ export function ConsoleSidebar() {
             <p className="text-xs text-sidebar-foreground/60">Console</p>
           </div>
         </div>
+        
+        {/* Salon Selector for multi-salon owners */}
+        {isSalonOwner && (
+          <div className="mt-4">
+            <SalonSelector />
+          </div>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-foreground/60 uppercase text-xs font-medium tracking-wider">
-            {user?.role === 'admin' ? 'Administration' : 'Salon Management'}
+            {isAdmin ? 'Administration' : 'Salon Management'}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
