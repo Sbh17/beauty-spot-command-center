@@ -27,29 +27,32 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   console.log('AuthProvider render, current user:', user);
 
   // Initialize user from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('haib_user');
-    if (savedUser) {
-      try {
+    console.log('AuthProvider initializing...');
+    try {
+      const savedUser = localStorage.getItem('haib_user');
+      console.log('Saved user from localStorage:', savedUser);
+      
+      if (savedUser) {
         const parsedUser = JSON.parse(savedUser);
         console.log('Restoring user from localStorage:', parsedUser);
         setUser(parsedUser);
-      } catch (error) {
-        console.error('Error parsing saved user:', error);
-        localStorage.removeItem('haib_user');
       }
+    } catch (error) {
+      console.error('Error parsing saved user:', error);
+      localStorage.removeItem('haib_user');
     }
-    setIsInitialized(true);
+    setIsLoading(false);
   }, []);
 
   // Save user to localStorage whenever it changes
   useEffect(() => {
-    if (isInitialized) {
+    if (!isLoading) {
       if (user) {
         console.log('Saving user to localStorage:', user);
         localStorage.setItem('haib_user', JSON.stringify(user));
@@ -58,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('haib_user');
       }
     }
-  }, [user, isInitialized]);
+  }, [user, isLoading]);
 
   // Auto-set currentSalonId if user has salon access but no currentSalonId
   useEffect(() => {
@@ -144,6 +147,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   console.log('AuthProvider context value:', contextValue);
+
+  // Don't render children until we've tried to restore from localStorage
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <AuthContext.Provider value={contextValue}>
