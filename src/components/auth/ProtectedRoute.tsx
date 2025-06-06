@@ -45,24 +45,28 @@ export const ProtectedRoute = ({
     );
   }
 
-  if (requireSalonAccess && user?.role === 'owner' && !user?.salonIds?.length) {
-    return fallback || (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" />
-              No Salon Access
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              You don't have access to any salons. Please contact an administrator.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  // For salon owners, check if they have salon access
+  if (requireSalonAccess && user?.role === 'owner') {
+    // If they don't have any salon IDs, show no access message
+    if (!user?.salonIds?.length) {
+      return fallback || (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Card className="max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                No Salon Access
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                You don't have access to any salons. Please contact an administrator.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
   }
 
   return <>{children}</>;

@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { UserRole } from '@/types/console';
 
 interface AuthUser {
@@ -27,6 +27,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
+
+  // Auto-set currentSalonId if user has salon access but no currentSalonId
+  useEffect(() => {
+    if (user && user.role === 'owner' && user.salonIds?.length && !user.currentSalonId) {
+      setUser(prev => prev ? { ...prev, currentSalonId: user.salonIds[0] } : null);
+    }
+  }, [user]);
 
   const login = async (email: string, password: string) => {
     // Mock login logic - replace with actual authentication
