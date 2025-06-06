@@ -107,8 +107,12 @@ export function ConsoleSidebar() {
     <Sidebar className="border-r border-border bg-sidebar">
       <SidebarHeader className="p-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 console-gradient rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">H</span>
+          <div className="w-10 h-10 flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/36c651de-4416-4bd1-929a-099e914b36cd.png" 
+              alt="HAIB Logo" 
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div>
             <h1 className="font-semibold text-sidebar-foreground">HAIB</h1>
