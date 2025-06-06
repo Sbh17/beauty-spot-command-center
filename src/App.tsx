@@ -13,6 +13,11 @@ import Salons from "./pages/admin/Salons";
 import Analytics from "./pages/admin/Analytics";
 import Requests from "./pages/admin/Requests";
 import Settings from "./pages/admin/Settings";
+import OwnerSalons from "./pages/owner/Salons";
+import OwnerAppointments from "./pages/owner/Appointments";
+import OwnerStaff from "./pages/owner/Staff";
+import OwnerAnalytics from "./pages/owner/Analytics";
+import OwnerProfile from "./pages/owner/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +57,33 @@ const App = () => (
               <Route path="/admin/settings" element={
                 <ProtectedRoute requiredRole="admin">
                   <Settings />
+                </ProtectedRoute>
+              } />
+              
+              {/* Salon owner routes */}
+              <Route path="/owner/salons" element={
+                <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+                  <OwnerSalons />
+                </ProtectedRoute>
+              } />
+              <Route path="/owner/appointments" element={
+                <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+                  <OwnerAppointments />
+                </ProtectedRoute>
+              } />
+              <Route path="/owner/staff" element={
+                <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+                  <OwnerStaff />
+                </ProtectedRoute>
+              } />
+              <Route path="/owner/analytics" element={
+                <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+                  <OwnerAnalytics />
+                </ProtectedRoute>
+              } />
+              <Route path="/owner/profile" element={
+                <ProtectedRoute requiredRole="owner">
+                  <OwnerProfile />
                 </ProtectedRoute>
               } />
               
