@@ -1,12 +1,14 @@
-
-import { ClipboardList, Check, X, Clock, Eye } from "lucide-react";
+import React, { useState } from "react";
+import { ClipboardList, Check, X, Clock, Eye, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataTable, StatusBadge } from "@/components/shared/DataTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SalonRequestDetails } from "@/components/admin/SalonRequestDetails";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data for salon approval requests
-const requests = [
+const initialRequests = [
   { 
     id: '1', 
     salonName: 'Luxe Beauty Lounge', 
@@ -54,6 +56,56 @@ const requestColumns = [
 ];
 
 const Requests = () => {
+  const [requests, setRequests] = useState(initialRequests);
+  const [selectedRequest, setSelectedRequest] = useState<typeof initialRequests[0] | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleViewDetails = (request: typeof initialRequests[0]) => {
+    console.log('Opening details for request:', request.id);
+    setSelectedRequest(request);
+    setIsDetailsOpen(true);
+  };
+
+  const handleApprove = (requestId: string) => {
+    console.log('Approving request:', requestId);
+    setRequests(prev => prev.map(req => 
+      req.id === requestId ? { ...req, status: 'approved' } : req
+    ));
+    toast({
+      title: "Request Approved",
+      description: "The salon registration request has been approved successfully.",
+    });
+  };
+
+  const handleReject = (requestId: string) => {
+    console.log('Rejecting request:', requestId);
+    setRequests(prev => prev.map(req => 
+      req.id === requestId ? { ...req, status: 'rejected' } : req
+    ));
+    toast({
+      title: "Request Rejected", 
+      description: "The salon registration request has been rejected.",
+      variant: "destructive",
+    });
+  };
+
+  const handleBulkApprove = () => {
+    const pendingRequests = requests.filter(req => req.status === 'pending' && req.documents === 'Complete');
+    console.log('Bulk approving requests:', pendingRequests.map(req => req.id));
+    
+    setRequests(prev => prev.map(req => 
+      req.status === 'pending' && req.documents === 'Complete' 
+        ? { ...req, status: 'approved' } 
+        : req
+    ));
+    
+    toast({
+      title: "Bulk Approval Complete",
+      description: `${pendingRequests.length} requests have been approved.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -115,18 +167,26 @@ const Requests = () => {
             columns={requestColumns}
             actions={(item) => (
               <div className="flex gap-2">
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => handleViewDetails(item)}>
+                  <FileText className="h-3 w-3 mr-1" />
+                  Details
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => handleViewDetails(item)}>
                   <Eye className="h-3 w-3 mr-1" />
                   View
                 </Button>
-                <Button size="sm" variant="default">
-                  <Check className="h-3 w-3 mr-1" />
-                  Approve
-                </Button>
-                <Button size="sm" variant="destructive">
-                  <X className="h-3 w-3 mr-1" />
-                  Reject
-                </Button>
+                {item.status === 'pending' && (
+                  <>
+                    <Button size="sm" variant="default" onClick={() => handleApprove(item.id)}>
+                      <Check className="h-3 w-3 mr-1" />
+                      Approve
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleReject(item.id)}>
+                      <X className="h-3 w-3 mr-1" />
+                      Reject
+                    </Button>
+                  </>
+                )}
               </div>
             )}
           />
@@ -139,7 +199,7 @@ const Requests = () => {
           <CardDescription>Common approval workflow actions</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button className="w-full justify-start">
+          <Button className="w-full justify-start" onClick={handleBulkApprove}>
             <Check className="h-4 w-4 mr-2" />
             Bulk Approve Completed Applications
           </Button>
@@ -153,6 +213,14 @@ const Requests = () => {
           </Button>
         </CardContent>
       </Card>
+
+      <SalonRequestDetails
+        request={selectedRequest}
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        onApprove={handleApprove}
+        onReject={handleReject}
+      />
     </div>
   );
 };
