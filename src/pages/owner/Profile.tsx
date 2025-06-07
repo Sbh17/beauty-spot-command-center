@@ -1,4 +1,3 @@
-
 import { User, Building2, Mail, Phone, Calendar, Edit, Save, X, Plus, Trash2, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PhotoGallery } from "@/components/owner/PhotoGallery";
+import { ReviewsManagement } from "@/components/owner/ReviewsManagement";
+import { StaffPerformance } from "@/components/owner/StaffPerformance";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -123,12 +125,12 @@ const Profile = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-6xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Profile & Business</h1>
+          <h1 className="text-3xl font-bold">Business Management</h1>
           <p className="text-muted-foreground">
-            Manage your personal information, salon details, and business settings
+            Manage your salon profile, staff, reviews, and showcase your work
           </p>
         </div>
       </div>
@@ -173,412 +175,442 @@ const Profile = () => {
         </CardHeader>
       </Card>
 
-      {/* Personal Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-          <CardDescription>Your basic profile information</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              {isEditing ? (
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{formData.name}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              {isEditing ? (
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{formData.email}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              {isEditing ? (
-                <Input
-                  id="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{formData.phone}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
-              {isEditing ? (
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{formData.address}</p>
-              )}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            {isEditing ? (
-              <Textarea
-                id="bio"
-                value={formData.bio}
-                onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                rows={3}
-              />
-            ) : (
-              <p className="py-2">{formData.bio}</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Tabbed Content */}
+      <Tabs defaultValue="profile" className="w-full">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="salon">Salon Info</TabsTrigger>
+          <TabsTrigger value="services">Services</TabsTrigger>
+          <TabsTrigger value="staff">Staff</TabsTrigger>
+          <TabsTrigger value="gallery">Gallery</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+        </TabsList>
 
-      {/* Salon Details */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Salon Information</CardTitle>
-              <CardDescription>Manage your salon details and contact information</CardDescription>
-            </div>
-            {!isEditingSalon ? (
-              <Button onClick={() => setIsEditingSalon(true)} variant="outline">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Salon
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={handleSaveSalon}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
-                <Button variant="outline" onClick={() => setIsEditingSalon(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="salonName">Salon Name</Label>
-              {isEditingSalon ? (
-                <Input
-                  id="salonName"
-                  value={salonData.name}
-                  onChange={(e) => setSalonData({...salonData, name: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{salonData.name}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="salonPhone">Phone</Label>
-              {isEditingSalon ? (
-                <Input
-                  id="salonPhone"
-                  value={salonData.phone}
-                  onChange={(e) => setSalonData({...salonData, phone: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{salonData.phone}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="salonEmail">Email</Label>
-              {isEditingSalon ? (
-                <Input
-                  id="salonEmail"
-                  value={salonData.email}
-                  onChange={(e) => setSalonData({...salonData, email: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{salonData.email}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="salonWebsite">Website</Label>
-              {isEditingSalon ? (
-                <Input
-                  id="salonWebsite"
-                  value={salonData.website}
-                  onChange={(e) => setSalonData({...salonData, website: e.target.value})}
-                />
-              ) : (
-                <p className="py-2">{salonData.website}</p>
-              )}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="salonAddress">Address</Label>
-            {isEditingSalon ? (
-              <Input
-                id="salonAddress"
-                value={salonData.address}
-                onChange={(e) => setSalonData({...salonData, address: e.target.value})}
-              />
-            ) : (
-              <p className="py-2 flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                {salonData.address}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="salonDescription">Description</Label>
-            {isEditingSalon ? (
-              <Textarea
-                id="salonDescription"
-                value={salonData.description}
-                onChange={(e) => setSalonData({...salonData, description: e.target.value})}
-                rows={3}
-              />
-            ) : (
-              <p className="py-2">{salonData.description}</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Services Management */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Services & Pricing</CardTitle>
-              <CardDescription>Manage your salon services, pricing, and duration</CardDescription>
-            </div>
-            {!isEditingServices ? (
-              <Button onClick={() => setIsEditingServices(true)} variant="outline">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Services
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={handleSaveServices}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
-                <Button variant="outline" onClick={() => setIsEditingServices(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isEditingServices && (
-            <div className="mb-6 p-4 border rounded-lg bg-muted/50">
-              <h4 className="font-medium mb-3">Add New Service</h4>
-              <div className="grid gap-3 md:grid-cols-4">
-                <Input
-                  placeholder="Service name"
-                  value={newService.name}
-                  onChange={(e) => setNewService({...newService, name: e.target.value})}
-                />
-                <Input
-                  type="number"
-                  placeholder="Price ($)"
-                  value={newService.price}
-                  onChange={(e) => setNewService({...newService, price: e.target.value})}
-                />
-                <Input
-                  type="number"
-                  placeholder="Duration (min)"
-                  value={newService.duration}
-                  onChange={(e) => setNewService({...newService, duration: e.target.value})}
-                />
-                <Button onClick={addService} className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add
-                </Button>
-              </div>
-              <Textarea
-                placeholder="Service description"
-                value={newService.description}
-                onChange={(e) => setNewService({...newService, description: e.target.value})}
-                className="mt-3"
-                rows={2}
-              />
-            </div>
-          )}
-          
-          <div className="space-y-3">
-            {services.map((service) => (
-              <div key={service.id} className="flex items-center gap-4 p-3 border rounded-lg">
-                <div className="flex-1 grid gap-2 md:grid-cols-4">
-                  {isEditingServices ? (
-                    <>
-                      <Input
-                        value={service.name}
-                        onChange={(e) => updateService(service.id, 'name', e.target.value)}
-                      />
-                      <Input
-                        type="number"
-                        value={service.price}
-                        onChange={(e) => updateService(service.id, 'price', e.target.value)}
-                      />
-                      <Input
-                        type="number"
-                        value={service.duration}
-                        onChange={(e) => updateService(service.id, 'duration', e.target.value)}
-                      />
-                      <Input
-                        value={service.description}
-                        onChange={(e) => updateService(service.id, 'description', e.target.value)}
-                        placeholder="Description"
-                      />
-                    </>
+        <TabsContent value="profile" className="space-y-6">
+          {/* Personal Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Personal Information</CardTitle>
+              <CardDescription>Your basic profile information</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  {isEditing ? (
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    />
                   ) : (
-                    <>
-                      <div>
-                        <p className="font-medium">{service.name}</p>
-                        <p className="text-sm text-muted-foreground">{service.description}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">${service.price}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground">{service.duration} min</p>
-                      </div>
-                      <div></div>
-                    </>
+                    <p className="py-2">{formData.name}</p>
                   )}
                 </div>
-                {isEditingServices && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeService(service.id)}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  {isEditing ? (
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    />
+                  ) : (
+                    <p className="py-2">{formData.email}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  {isEditing ? (
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    />
+                  ) : (
+                    <p className="py-2">{formData.phone}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  {isEditing ? (
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({...formData, address: e.target.value})}
+                    />
+                  ) : (
+                    <p className="py-2">{formData.address}</p>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                {isEditing ? (
+                  <Textarea
+                    id="bio"
+                    value={formData.bio}
+                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                    rows={3}
+                  />
+                ) : (
+                  <p className="py-2">{formData.bio}</p>
                 )}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Working Hours */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Working Hours</CardTitle>
-              <CardDescription>Set your salon operating hours</CardDescription>
-            </div>
-            {!isEditingHours ? (
-              <Button onClick={() => setIsEditingHours(true)} variant="outline">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Hours
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={handleSaveHours}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
-                <Button variant="outline" onClick={() => setIsEditingHours(false)}>
-                  <X className="h-4 w-4 mr-2" />
-                  Cancel
-                </Button>
+          {/* Salon Access */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Salon Access</CardTitle>
+              <CardDescription>Salons you have access to manage</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {user?.salonIds?.map((salonId, index) => (
+                  <div key={salonId} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Building2 className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-medium">
+                          {salonId === 'salon-1' ? 'Glamour Studio' : 
+                           salonId === 'salon-2' ? 'Beauty Haven' : 
+                           salonId === 'salon-3' ? 'Radiant Salon' : salonId}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Owner Access</p>
+                      </div>
+                    </div>
+                    <Badge variant={salonId === user.currentSalonId ? 'default' : 'secondary'}>
+                      {salonId === user.currentSalonId ? 'Current' : 'Available'}
+                    </Badge>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {Object.entries(workingHours).map(([day, hours]) => (
-            <div key={day} className="flex items-center justify-between p-3 border rounded-lg">
-              <div className="flex items-center gap-3">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium capitalize w-20">{day}</span>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="salon" className="space-y-6">
+          {/* Salon Details */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Salon Information</CardTitle>
+                  <CardDescription>Manage your salon details and contact information</CardDescription>
+                </div>
+                {!isEditingSalon ? (
+                  <Button onClick={() => setIsEditingSalon(true)} variant="outline">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Salon
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button onClick={handleSaveSalon}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsEditingSalon(false)}>
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                )}
               </div>
-              {isEditingHours ? (
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={hours.closed}
-                      onChange={(e) => updateWorkingHours(day, 'closed', e.target.checked)}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="salonName">Salon Name</Label>
+                  {isEditingSalon ? (
+                    <Input
+                      id="salonName"
+                      value={salonData.name}
+                      onChange={(e) => setSalonData({...salonData, name: e.target.value})}
                     />
-                    <span className="text-sm">Closed</span>
-                  </label>
-                  {!hours.closed && (
-                    <>
-                      <Input
-                        type="time"
-                        value={hours.open}
-                        onChange={(e) => updateWorkingHours(day, 'open', e.target.value)}
-                        className="w-32"
-                      />
-                      <span>to</span>
-                      <Input
-                        type="time"
-                        value={hours.close}
-                        onChange={(e) => updateWorkingHours(day, 'close', e.target.value)}
-                        className="w-32"
-                      />
-                    </>
+                  ) : (
+                    <p className="py-2">{salonData.name}</p>
                   )}
                 </div>
-              ) : (
-                <span className="text-muted-foreground">
-                  {hours.closed ? 'Closed' : `${hours.open} - ${hours.close}`}
-                </span>
-              )}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* Salon Access */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Salon Access</CardTitle>
-          <CardDescription>Salons you have access to manage</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {user?.salonIds?.map((salonId, index) => (
-              <div key={salonId} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Building2 className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">
-                      {salonId === 'salon-1' ? 'Glamour Studio' : 
-                       salonId === 'salon-2' ? 'Beauty Haven' : 
-                       salonId === 'salon-3' ? 'Radiant Salon' : salonId}
-                    </p>
-                    <p className="text-sm text-muted-foreground">Owner Access</p>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="salonPhone">Phone</Label>
+                  {isEditingSalon ? (
+                    <Input
+                      id="salonPhone"
+                      value={salonData.phone}
+                      onChange={(e) => setSalonData({...salonData, phone: e.target.value})}
+                    />
+                  ) : (
+                    <p className="py-2">{salonData.phone}</p>
+                  )}
                 </div>
-                <Badge variant={salonId === user.currentSalonId ? 'default' : 'secondary'}>
-                  {salonId === user.currentSalonId ? 'Current' : 'Available'}
-                </Badge>
+                <div className="space-y-2">
+                  <Label htmlFor="salonEmail">Email</Label>
+                  {isEditingSalon ? (
+                    <Input
+                      id="salonEmail"
+                      value={salonData.email}
+                      onChange={(e) => setSalonData({...salonData, email: e.target.value})}
+                    />
+                  ) : (
+                    <p className="py-2">{salonData.email}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="salonWebsite">Website</Label>
+                  {isEditingSalon ? (
+                    <Input
+                      id="salonWebsite"
+                      value={salonData.website}
+                      onChange={(e) => setSalonData({...salonData, website: e.target.value})}
+                    />
+                  ) : (
+                    <p className="py-2">{salonData.website}</p>
+                  )}
+                </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="salonAddress">Address</Label>
+                {isEditingSalon ? (
+                  <Input
+                    id="salonAddress"
+                    value={salonData.address}
+                    onChange={(e) => setSalonData({...salonData, address: e.target.value})}
+                  />
+                ) : (
+                  <p className="py-2 flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    {salonData.address}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="salonDescription">Description</Label>
+                {isEditingSalon ? (
+                  <Textarea
+                    id="salonDescription"
+                    value={salonData.description}
+                    onChange={(e) => setSalonData({...salonData, description: e.target.value})}
+                    rows={3}
+                  />
+                ) : (
+                  <p className="py-2">{salonData.description}</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Working Hours */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Working Hours</CardTitle>
+                  <CardDescription>Set your salon operating hours</CardDescription>
+                </div>
+                {!isEditingHours ? (
+                  <Button onClick={() => setIsEditingHours(true)} variant="outline">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Hours
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button onClick={handleSaveHours}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsEditingHours(false)}>
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {Object.entries(workingHours).map(([day, hours]) => (
+                <div key={day} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium capitalize w-20">{day}</span>
+                  </div>
+                  {isEditingHours ? (
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={hours.closed}
+                          onChange={(e) => updateWorkingHours(day, 'closed', e.target.checked)}
+                        />
+                        <span className="text-sm">Closed</span>
+                      </label>
+                      {!hours.closed && (
+                        <>
+                          <Input
+                            type="time"
+                            value={hours.open}
+                            onChange={(e) => updateWorkingHours(day, 'open', e.target.value)}
+                            className="w-32"
+                          />
+                          <span>to</span>
+                          <Input
+                            type="time"
+                            value={hours.close}
+                            onChange={(e) => updateWorkingHours(day, 'close', e.target.value)}
+                            className="w-32"
+                          />
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      {hours.closed ? 'Closed' : `${hours.open} - ${hours.close}`}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="services" className="space-y-6">
+          {/* Services Management */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Services & Pricing</CardTitle>
+                  <CardDescription>Manage your salon services, pricing, and duration</CardDescription>
+                </div>
+                {!isEditingServices ? (
+                  <Button onClick={() => setIsEditingServices(true)} variant="outline">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Services
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button onClick={handleSaveServices}>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsEditingServices(false)}>
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isEditingServices && (
+                <div className="mb-6 p-4 border rounded-lg bg-muted/50">
+                  <h4 className="font-medium mb-3">Add New Service</h4>
+                  <div className="grid gap-3 md:grid-cols-4">
+                    <Input
+                      placeholder="Service name"
+                      value={newService.name}
+                      onChange={(e) => setNewService({...newService, name: e.target.value})}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Price ($)"
+                      value={newService.price}
+                      onChange={(e) => setNewService({...newService, price: e.target.value})}
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Duration (min)"
+                      value={newService.duration}
+                      onChange={(e) => setNewService({...newService, duration: e.target.value})}
+                    />
+                    <Button onClick={addService} className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add
+                    </Button>
+                  </div>
+                  <Textarea
+                    placeholder="Service description"
+                    value={newService.description}
+                    onChange={(e) => setNewService({...newService, description: e.target.value})}
+                    className="mt-3"
+                    rows={2}
+                  />
+                </div>
+              )}
+              
+              <div className="space-y-3">
+                {services.map((service) => (
+                  <div key={service.id} className="flex items-center gap-4 p-3 border rounded-lg">
+                    <div className="flex-1 grid gap-2 md:grid-cols-4">
+                      {isEditingServices ? (
+                        <>
+                          <Input
+                            value={service.name}
+                            onChange={(e) => updateService(service.id, 'name', e.target.value)}
+                          />
+                          <Input
+                            type="number"
+                            value={service.price}
+                            onChange={(e) => updateService(service.id, 'price', e.target.value)}
+                          />
+                          <Input
+                            type="number"
+                            value={service.duration}
+                            onChange={(e) => updateService(service.id, 'duration', e.target.value)}
+                          />
+                          <Input
+                            value={service.description}
+                            onChange={(e) => updateService(service.id, 'description', e.target.value)}
+                            placeholder="Description"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <p className="font-medium">{service.name}</p>
+                            <p className="text-sm text-muted-foreground">{service.description}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">${service.price}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground">{service.duration} min</p>
+                          </div>
+                          <div></div>
+                        </>
+                      )}
+                    </div>
+                    {isEditingServices && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeService(service.id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="staff" className="space-y-6">
+          <StaffPerformance />
+        </TabsContent>
+
+        <TabsContent value="gallery" className="space-y-6">
+          <PhotoGallery />
+        </TabsContent>
+
+        <TabsContent value="reviews" className="space-y-6">
+          <ReviewsManagement />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
