@@ -5,9 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { StatsCard } from "@/components/shared/StatsCard";
+import { AddSalonDialog } from "@/components/owner/AddSalonDialog";
+import { useState } from "react";
 
 // Mock salon data based on user's salon access
-const salonDetails = {
+const initialSalonDetails = {
   'salon-1': {
     id: 'salon-1',
     name: 'Glamour Studio',
@@ -58,7 +60,20 @@ const salonDetails = {
 
 const Salons = () => {
   const { user } = useAuth();
+  const [salonDetails, setSalonDetails] = useState(initialSalonDetails);
+  const [isAddSalonOpen, setIsAddSalonOpen] = useState(false);
+  
   const userSalons = user?.salonIds?.map(id => salonDetails[id as keyof typeof salonDetails]).filter(Boolean) || [];
+
+  const handleSalonAdded = (newSalon: any) => {
+    setSalonDetails(prev => ({
+      ...prev,
+      [newSalon.id]: newSalon
+    }));
+    
+    // In a real app, you would also update the user's salonIds
+    console.log('New salon added:', newSalon);
+  };
 
   return (
     <div className="space-y-6">
@@ -69,7 +84,7 @@ const Salons = () => {
             Manage your salon information and settings
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddSalonOpen(true)}>
           <Building2 className="h-4 w-4 mr-2" />
           Add New Salon
         </Button>
@@ -223,13 +238,19 @@ const Salons = () => {
             <p className="text-muted-foreground text-center mb-4">
               You don't have access to any salons yet. Contact an administrator or add a new salon.
             </p>
-            <Button>
+            <Button onClick={() => setIsAddSalonOpen(true)}>
               <Building2 className="h-4 w-4 mr-2" />
               Add Your First Salon
             </Button>
           </CardContent>
         </Card>
       )}
+
+      <AddSalonDialog
+        isOpen={isAddSalonOpen}
+        onClose={() => setIsAddSalonOpen(false)}
+        onSalonAdded={handleSalonAdded}
+      />
     </div>
   );
 };
