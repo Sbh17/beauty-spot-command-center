@@ -25,6 +25,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { SalonSelector } from "@/components/auth/SalonSelector";
+import { Link, useLocation } from "react-router-dom";
 
 interface MenuItem {
   title: string;
@@ -102,7 +103,10 @@ const ownerMenuItems: MenuItem[] = [
 
 export function ConsoleSidebar() {
   const { user, isAdmin, isSalonOwner } = useAuth();
+  const location = useLocation();
   const menuItems = isAdmin ? adminMenuItems : ownerMenuItems;
+
+  console.log('ConsoleSidebar render - current location:', location.pathname);
 
   return (
     <Sidebar className="border-r border-border bg-sidebar">
@@ -139,7 +143,13 @@ export function ConsoleSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="hover:bg-sidebar-accent">
-                    <a href={item.url} className="flex items-center gap-3">
+                    <Link 
+                      to={item.url} 
+                      className={`flex items-center gap-3 ${
+                        location.pathname === item.url ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
+                      }`}
+                      onClick={() => console.log('Navigating to:', item.url)}
+                    >
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                       {item.badge && (
@@ -147,7 +157,7 @@ export function ConsoleSidebar() {
                           {item.badge}
                         </Badge>
                       )}
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
