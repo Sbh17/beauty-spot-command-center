@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, Building2, MapPin, Mail, Phone, Clock } from "lucide-react";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { Plus, X, Building2, MapPin, Mail, Phone, Clock, Images } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
@@ -30,6 +30,7 @@ export const AddSalonDialog: React.FC<AddSalonDialogProps> = ({
     email: '',
     description: '',
     services: [] as string[],
+    images: [] as File[],
     workingHours: {
       monday: '9:00 AM - 6:00 PM',
       tuesday: '9:00 AM - 6:00 PM',
@@ -81,6 +82,13 @@ export const AddSalonDialog: React.FC<AddSalonDialogProps> = ({
     }));
   };
 
+  const handleImagesChange = (images: File[]) => {
+    setFormData(prev => ({
+      ...prev,
+      images
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -92,6 +100,10 @@ export const AddSalonDialog: React.FC<AddSalonDialogProps> = ({
       });
       return;
     }
+
+    // In a real app, you would upload the images to a server/cloud storage
+    // For now, we'll just create URLs from the files for demo purposes
+    const imageUrls = formData.images.map(file => URL.createObjectURL(file));
 
     const newSalon = {
       id: `salon-${Date.now()}`,
@@ -106,14 +118,15 @@ export const AddSalonDialog: React.FC<AddSalonDialogProps> = ({
       monthlyAppointments: 0,
       monthlyRevenue: 0,
       services: formData.services,
-      workingHours: formData.workingHours
+      workingHours: formData.workingHours,
+      images: imageUrls
     };
 
     onSalonAdded(newSalon);
     
     toast({
       title: "Salon Added Successfully",
-      description: `${formData.salonName} has been added to your salons.`
+      description: `${formData.salonName} has been added to your salons with ${formData.images.length} images.`
     });
     
     onClose();
@@ -126,6 +139,7 @@ export const AddSalonDialog: React.FC<AddSalonDialogProps> = ({
       email: '',
       description: '',
       services: [],
+      images: [],
       workingHours: {
         monday: '9:00 AM - 6:00 PM',
         tuesday: '9:00 AM - 6:00 PM',
@@ -212,6 +226,23 @@ export const AddSalonDialog: React.FC<AddSalonDialogProps> = ({
                   rows={3}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Salon Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Images className="h-5 w-5" />
+                Salon Images
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ImageUpload
+                value={formData.images}
+                onChange={handleImagesChange}
+                maxFiles={10}
+              />
             </CardContent>
           </Card>
 
