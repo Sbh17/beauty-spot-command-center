@@ -1,13 +1,15 @@
 
+import { useState } from "react";
 import { Building2, Plus, Search, Filter, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTable, StatusBadge } from "@/components/shared/DataTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AddSalonDialog } from "@/components/owner/AddSalonDialog";
 
 // Mock data for salons
-const salons = [
+const initialSalons = [
   { id: '1', name: 'Glamour Studio', owner: 'Alice Johnson', location: 'New York, NY', status: 'active', services: 15, rating: 4.8, revenue: 12500 },
   { id: '2', name: 'Beauty Haven', owner: 'Bob Smith', location: 'Los Angeles, CA', status: 'pending', services: 12, rating: 4.6, revenue: 8900 },
   { id: '3', name: 'Radiant Salon', owner: 'Carol Davis', location: 'Chicago, IL', status: 'active', services: 20, rating: 4.9, revenue: 15600 },
@@ -31,6 +33,24 @@ const salonColumns = [
 ];
 
 const Salons = () => {
+  const [salons, setSalons] = useState(initialSalons);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [totalSalons, setTotalSalons] = useState(89);
+  const [activeSalons, setActiveSalons] = useState(78);
+
+  const handleSalonAdded = (newSalon: any) => {
+    console.log('New salon added:', newSalon);
+    
+    // Add the new salon to the list
+    setSalons(prev => [...prev, newSalon]);
+    
+    // Update the stats
+    setTotalSalons(prev => prev + 1);
+    if (newSalon.status === 'active') {
+      setActiveSalons(prev => prev + 1);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -38,7 +58,7 @@ const Salons = () => {
           <h1 className="text-3xl font-bold">Salon Management</h1>
           <p className="text-muted-foreground">Manage all salons on the platform</p>
         </div>
-        <Button>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Salon
         </Button>
@@ -51,7 +71,7 @@ const Salons = () => {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">89</div>
+            <div className="text-2xl font-bold">{totalSalons}</div>
             <p className="text-xs text-muted-foreground">+8% from last month</p>
           </CardContent>
         </Card>
@@ -61,7 +81,7 @@ const Salons = () => {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">78</div>
+            <div className="text-2xl font-bold">{activeSalons}</div>
             <p className="text-xs text-muted-foreground">88% operational</p>
           </CardContent>
         </Card>
@@ -109,6 +129,12 @@ const Salons = () => {
           />
         </CardContent>
       </Card>
+
+      <AddSalonDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onSalonAdded={handleSalonAdded}
+      />
     </div>
   );
 };
