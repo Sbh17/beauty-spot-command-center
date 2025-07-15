@@ -10,7 +10,7 @@ interface ConsoleLayoutProps {
 export const ConsoleLayout = ({ children }: ConsoleLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50">
+      <div className="min-h-screen flex w-full bg-background/95">
         <ConsoleSidebar />
         <div className="flex-1 flex flex-col">
           <ConsoleHeader />
