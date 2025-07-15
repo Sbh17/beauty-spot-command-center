@@ -1,5 +1,5 @@
 
-import { Bell, Search, LogOut, Home, BarChart3, Building2, Calendar, Users, UserCheck, ClipboardList, TrendingUp, Settings, ChevronDown, Tag, Menu, X } from "lucide-react";
+import { Bell, Search, LogOut, Home, BarChart3, Building2, Calendar, Users, UserCheck, ClipboardList, TrendingUp, Settings, ChevronDown, Tag, Menu, X, CheckCircle, AlertCircle, Info, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { SalonSelector } from "@/components/auth/SalonSelector";
@@ -93,11 +94,83 @@ const ownerMenuItems: MenuItem[] = [
   },
 ];
 
+interface Notification {
+  id: string;
+  type: 'success' | 'warning' | 'info';
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+}
+
 export const ConsoleHeader = () => {
   const { user, logout, isAdmin, isSalonOwner } = useAuth();
   const location = useLocation();
   const [isMinimized, setIsMinimized] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'success',
+      title: 'Appointment Confirmed',
+      message: 'Your appointment at Downtown Salon has been confirmed.',
+      time: '2 min ago',
+      read: false,
+    },
+    {
+      id: '2',
+      type: 'warning',
+      title: 'Payment Due',
+      message: 'Monthly subscription payment is due in 3 days.',
+      time: '1 hour ago',
+      read: false,
+    },
+    {
+      id: '3',
+      type: 'info',
+      title: 'New Feature Available',
+      message: 'Check out our new analytics dashboard.',
+      time: '2 hours ago',
+      read: false,
+    },
+  ]);
   const menuItems = isAdmin ? adminMenuItems : ownerMenuItems;
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    );
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'success':
+        return CheckCircle;
+      case 'warning':
+        return AlertCircle;
+      case 'info':
+        return Info;
+      default:
+        return Info;
+    }
+  };
+
+  const getNotificationColor = (type: string) => {
+    switch (type) {
+      case 'success':
+        return 'text-green-500';
+      case 'warning':
+        return 'text-yellow-500';
+      case 'info':
+        return 'text-blue-500';
+      default:
+        return 'text-blue-500';
+    }
+  };
 
   return (
     <header className={`border-b border-border/20 bg-primary elegant-shadow transition-all duration-300 ${
@@ -176,22 +249,85 @@ export const ConsoleHeader = () => {
                 />
               </div>
 
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative h-10 w-10 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
-                onClick={() => {
-                  // Add notification functionality here
-                  console.log('Notification clicked');
-                }}
-              >
-                <Bell className="h-5 w-5" />
-                <Badge 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-white text-primary border-0"
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative h-10 w-10 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
+                  >
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <Badge 
+                        className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-white text-primary border-0"
+                      >
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-80 border-border bg-card shadow-lg z-50"
                 >
-                  3
-                </Badge>
-              </Button>
+                  <div className="px-4 py-3 border-b border-border">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium luxury-text tracking-wide">Notifications</h3>
+                      {notifications.length > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={clearAllNotifications}
+                          className="text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Clear All
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-muted-foreground">
+                      <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No new notifications</p>
+                    </div>
+                  ) : (
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.map((notification) => {
+                        const IconComponent = getNotificationIcon(notification.type);
+                        return (
+                          <DropdownMenuItem
+                            key={notification.id}
+                            className="px-4 py-3 cursor-pointer hover:bg-muted/50 border-b border-border/50 last:border-b-0"
+                            onClick={() => markAsRead(notification.id)}
+                          >
+                            <div className="flex items-start gap-3 w-full">
+                              <IconComponent className={`h-5 w-5 mt-0.5 ${getNotificationColor(notification.type)}`} />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <p className="text-sm font-medium luxury-text tracking-wide truncate">
+                                    {notification.title}
+                                  </p>
+                                  {!notification.read && (
+                                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground line-clamp-2">
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {notification.time}
+                                </p>
+                              </div>
+                            </div>
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </div>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -306,22 +442,85 @@ export const ConsoleHeader = () => {
 
             {/* Minimized Right Side */}
             <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="relative h-8 w-8 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
-                onClick={() => {
-                  // Add notification functionality here
-                  console.log('Notification clicked');
-                }}
-              >
-                <Bell className="h-4 w-4" />
-                <Badge 
-                  className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs bg-white text-primary border-0"
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="relative h-8 w-8 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
+                  >
+                    <Bell className="h-4 w-4" />
+                    {unreadCount > 0 && (
+                      <Badge 
+                        className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-xs bg-white text-primary border-0"
+                      >
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-80 border-border bg-card shadow-lg z-50"
                 >
-                  3
-                </Badge>
-              </Button>
+                  <div className="px-4 py-3 border-b border-border">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium luxury-text tracking-wide">Notifications</h3>
+                      {notifications.length > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={clearAllNotifications}
+                          className="text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Clear All
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-muted-foreground">
+                      <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No new notifications</p>
+                    </div>
+                  ) : (
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.map((notification) => {
+                        const IconComponent = getNotificationIcon(notification.type);
+                        return (
+                          <DropdownMenuItem
+                            key={notification.id}
+                            className="px-4 py-3 cursor-pointer hover:bg-muted/50 border-b border-border/50 last:border-b-0"
+                            onClick={() => markAsRead(notification.id)}
+                          >
+                            <div className="flex items-start gap-3 w-full">
+                              <IconComponent className={`h-5 w-5 mt-0.5 ${getNotificationColor(notification.type)}`} />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <p className="text-sm font-medium luxury-text tracking-wide truncate">
+                                    {notification.title}
+                                  </p>
+                                  {!notification.read && (
+                                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                                  )}
+                                </div>
+                                <p className="text-xs text-muted-foreground line-clamp-2">
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {notification.time}
+                                </p>
+                              </div>
+                            </div>
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </div>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
