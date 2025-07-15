@@ -180,15 +180,15 @@ export const ConsoleHeader = () => {
               >
                 <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
                   <span className="text-primary text-sm luxury-text font-medium">
-                    {user?.name.charAt(0)}
+                    {user?.name?.charAt(0) || 'U'}
                   </span>
                 </div>
                 <div className="hidden md:flex flex-col items-start">
                   <span className="text-sm luxury-text tracking-wide font-medium">
-                    {user?.name}
+                    {user?.name || 'User'}
                   </span>
                   <span className="text-xs text-white/60 luxury-text tracking-wider capitalize">
-                    {user?.role}
+                    {user?.role || 'user'}
                   </span>
                 </div>
                 <ChevronDown className="h-4 w-4" />
@@ -196,11 +196,11 @@ export const ConsoleHeader = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               align="end" 
-              className="w-56 border-border/20 bg-background/95 backdrop-blur-xl elegant-shadow"
+              className="w-56 border-border bg-card shadow-lg z-50"
             >
               <DropdownMenuItem 
                 onClick={logout} 
-                className="text-destructive hover:bg-destructive/10 transition-colors duration-300 luxury-text tracking-wide"
+                className="text-destructive hover:bg-destructive/10 transition-colors duration-300 luxury-text tracking-wide cursor-pointer"
               >
                 <LogOut className="mr-3 h-4 w-4" />
                 Logout
