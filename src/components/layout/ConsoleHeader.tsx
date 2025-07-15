@@ -265,6 +265,43 @@ export const ConsoleHeader = () => {
                   )}
                 </Link>
               ))}
+              
+              {/* More menu for remaining items */}
+              {menuItems.length > 5 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-8 h-8 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
+                      title="More"
+                    >
+                      <Menu className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    align="end" 
+                    className="w-48 border-border bg-card shadow-lg z-50"
+                  >
+                    {menuItems.slice(5).map((item) => (
+                      <DropdownMenuItem key={item.title} asChild>
+                        <Link
+                          to={item.url}
+                          className="flex items-center gap-3 px-2 py-2 luxury-text tracking-wide cursor-pointer"
+                        >
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                          {item.badge && (
+                            <Badge className="ml-auto bg-primary text-primary-foreground text-xs px-2 py-0.5">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
 
             {/* Minimized Right Side */}
