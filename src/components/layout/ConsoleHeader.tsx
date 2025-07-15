@@ -180,6 +180,10 @@ export const ConsoleHeader = () => {
                 variant="ghost" 
                 size="icon" 
                 className="relative h-10 w-10 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
+                onClick={() => {
+                  // Add notification functionality here
+                  console.log('Notification clicked');
+                }}
               >
                 <Bell className="h-5 w-5" />
                 <Badge 
@@ -269,6 +273,10 @@ export const ConsoleHeader = () => {
                 variant="ghost" 
                 size="icon" 
                 className="relative h-8 w-8 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
+                onClick={() => {
+                  // Add notification functionality here
+                  console.log('Notification clicked');
+                }}
               >
                 <Bell className="h-4 w-4" />
                 <Badge 
@@ -278,17 +286,33 @@ export const ConsoleHeader = () => {
                 </Badge>
               </Button>
 
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="h-8 w-8 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
-              >
-                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-primary text-xs luxury-text font-medium">
-                    {user?.name?.charAt(0) || 'U'}
-                  </span>
-                </div>
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="h-8 w-8 hover:bg-white/10 transition-all duration-300 rounded-lg text-white"
+                  >
+                    <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                      <span className="text-primary text-xs luxury-text font-medium">
+                        {user?.name?.charAt(0) || 'U'}
+                      </span>
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-56 border-border bg-card shadow-lg z-50"
+                >
+                  <DropdownMenuItem 
+                    onClick={logout} 
+                    className="text-destructive hover:bg-destructive/10 transition-colors duration-300 luxury-text tracking-wide cursor-pointer"
+                  >
+                    <LogOut className="mr-3 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </>
         )}
