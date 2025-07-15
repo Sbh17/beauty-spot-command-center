@@ -1,5 +1,5 @@
 
-import { Bell, Search, LogOut, Home, BarChart3, Building2, Calendar, Users, UserCheck, ClipboardList, TrendingUp, Settings, ChevronDown } from "lucide-react";
+import { Bell, Search, LogOut, Home, BarChart3, Building2, Calendar, Users, UserCheck, ClipboardList, TrendingUp, Settings, ChevronDown, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
@@ -82,6 +82,11 @@ const ownerMenuItems: MenuItem[] = [
     title: "Staff",
     url: "/owner/staff",
     icon: UserCheck,
+  },
+  {
+    title: "Promotions",
+    url: "/owner/promotions",
+    icon: Tag,
   },
   {
     title: "Analytics",

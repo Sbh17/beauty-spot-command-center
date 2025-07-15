@@ -19,6 +19,7 @@ import OwnerAppointments from "./pages/owner/Appointments";
 import OwnerStaff from "./pages/owner/Staff";
 import OwnerAnalytics from "./pages/owner/Analytics";
 import OwnerProfile from "./pages/owner/Profile";
+import OwnerPromotions from "./pages/owner/Promotions";
 import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 
@@ -104,6 +105,11 @@ const AppContent = () => {
         <Route path="/owner/profile" element={
           <ProtectedRoute requiredRole="owner">
             <OwnerProfile />
+          </ProtectedRoute>
+        } />
+        <Route path="/owner/promotions" element={
+          <ProtectedRoute requiredRole="owner" requireSalonAccess={true}>
+            <OwnerPromotions />
           </ProtectedRoute>
         } />
         
