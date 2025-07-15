@@ -109,7 +109,7 @@ export const ConsoleHeader = () => {
             <img 
               src="/lovable-uploads/36c651de-4416-4bd1-929a-099e914b36cd.png" 
               alt="HAIB Logo" 
-              className="w-8 h-8 object-contain filter brightness-0 invert"
+              className="w-8 h-8 object-contain"
             />
             <div className="luxury-text text-white text-lg tracking-[0.3em]">
               HAIB
@@ -125,7 +125,7 @@ export const ConsoleHeader = () => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="flex-1 flex items-center">
+        <nav className="flex-1 flex items-center justify-center">
           <div className="flex items-center gap-1">
             {menuItems.map((item) => (
               <Link
